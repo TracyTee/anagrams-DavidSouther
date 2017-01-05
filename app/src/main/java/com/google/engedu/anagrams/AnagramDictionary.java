@@ -41,39 +41,59 @@ public class AnagramDictionary {
     private Random random = new Random();
 
     private HashMap<String, ArrayList<String>> lettersToWord = new HashMap<>();
+    private List<String> dictionary = new ArrayList<String>();
+
 
     public AnagramDictionary(InputStream wordListStream) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(wordListStream));
         String line;
+
         while((line = in.readLine()) != null) {
             String word = line.trim();
             //
             //  Your code here
-            //
+            dictionary.add(word);
+
+            String temp =  sortLetters(word);
+           if( !lettersToWord.containsKey(temp)){
+               lettersToWord.put(temp,new ArrayList<String>());
+
+           }
+            lettersToWord.get(temp).add(word);
+           }
         }
-    }
 
     public boolean isGoodWord(String word, String base) {
-        //
+        return getAnagramsWithOneMoreLetter(base).contains(word);
         // Your code here
-        //
-        return true;
+       // return (!word.equals(base) && isAnagram(word.toUpperCase(),base.toUpperCase()));
+
     }
 
     public List<String> getAnagrams(String targetWord) {
-        ArrayList<String> result = new ArrayList<String>();
+       // ArrayList<String> result = new ArrayList<String>();
         //
         // Your code here
-        //
-        return result;
+        //go through master list and find anagrams of word
+       /** for(String word:dictionary)
+        {
+            if(isAnagram(word,targetWord)){
+                result.add(word);
+            }
+        }**/
+        String sortedWord = sortLetters(targetWord);
+        if(!lettersToWord.containsKey(sortedWord)){
+            return new ArrayList<>();
+        }
+        return lettersToWord.get(sortedWord);
     }
 
     @VisibleForTesting
     static boolean isAnagram(String first, String second) {
         //
         // Your code here
-        //
-        return true;
+        return sortLetters(first).equals(sortLetters(second));
+
     }
 
     @VisibleForTesting
@@ -81,15 +101,29 @@ public class AnagramDictionary {
         char[] chars = input.toCharArray();
         //
         // Your code here
+        Arrays.sort(chars);
+        String sortedWord = String.valueOf(chars);
         //
-        return "";
+        return sortedWord;
     }
 
     public List<String> getAnagramsWithOneMoreLetter(String word) {
         ArrayList<String> result = new ArrayList<String>();
         //
         // Your code here
-        //
+        //going through the letters in the alphabet
+       // char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+        for(char i = 'a'; i<='z' ; i++)
+        {
+            String temp = sortLetters(word + i);
+            result.addAll(getAnagrams(temp));
+        }
+      /**  for( char c: alphabet)
+        {
+            String temp = sortLetters(word + c);
+            result.addAll(getAnagrams(temp));
+        }**/
+
         return result;
     }
 
